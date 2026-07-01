@@ -12,7 +12,7 @@ namespace CSharp_AzureDevopsNotifier
         private readonly AzureDevOpsSettings _azureDevOpsSettings;
         private readonly string _pathSettings;
         private BindingList<AzureDevOpsQuery> bindingListQueries;
-        private BindingList<string> bindingListQueriesFilters;
+        private BindingList<FilterItem> bindingListQueriesFilters;
 
         public EditForm()
         {
@@ -21,8 +21,14 @@ namespace CSharp_AzureDevopsNotifier
 
         public EditForm(string pathSettings, AzureDevOpsSettings azureDevOpsSettings = null)
         {
+            InitializeComponent();
             _pathSettings = pathSettings;
             _azureDevOpsSettings = azureDevOpsSettings ?? JsonHelpers<AzureDevOpsSettings>.Load(_pathSettings);
+        }
+
+        private void ButtonQueriesAdd_Click(object sender, EventArgs e)
+        {
+            bindingListQueries.AddNew();
         }
 
         private void ButtonQueriesDelete_Click(object sender, EventArgs e)
@@ -47,16 +53,39 @@ namespace CSharp_AzureDevopsNotifier
         {
             var currentIndex = GetCurrentQueryIndex();
             if (currentIndex == null) return;
-            var currentQuery = _azureDevOpsSettings.Queries[currentIndex.Value];
+            var currentQuery = bindingListQueries[currentIndex.Value];
 
             dataGridViewQueriesFilters.ClearSelection();
             dataGridViewQueriesFilters.CurrentCell = null;
 
-            currentQuery.Filters = bindingListQueriesFilters.AsEnumerable().Where(w => !string.IsNullOrWhiteSpace(w)).ToList();
+            currentQuery.Filters = bindingListQueriesFilters.Select(f => f.Value).Where(w => !string.IsNullOrWhiteSpace(w)).ToList();
             currentQuery.Name = !string.IsNullOrWhiteSpace(textBoxName.Text) ? textBoxName.Text : null;
             currentQuery.RepositoryName = !string.IsNullOrWhiteSpace(textBoxRepositoryName.Text) ? textBoxRepositoryName.Text : null;
             currentQuery.Running = checkBoxRunning.Checked;
             currentQuery.Type = (AzureDevopsQueryType)comboBoxType.SelectedIndex;
+
+            // Reflect the edited values back into the queries grid immediately.
+            dataGridViewQueries.Refresh();
+        }
+
+        private void ButtonQueriesFiltersAdd_Click(object sender, EventArgs e)
+        {
+            bindingListQueriesFilters?.AddNew();
+        }
+
+        private void ButtonQueriesFiltersDelete_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewQueriesFilters.SelectedRows.Count > 0)
+            {
+                foreach (DataGridViewRow item in dataGridViewQueriesFilters.SelectedRows)
+                {
+                    dataGridViewQueriesFilters.Rows.RemoveAt(item.Index);
+                }
+            }
+            else if (dataGridViewQueriesFilters.CurrentCell != null)
+            {
+                dataGridViewQueriesFilters.Rows.RemoveAt(dataGridViewQueriesFilters.CurrentCell.RowIndex);
+            }
         }
 
         private void DataGridViewQueries_SelectionChanged(object sender, EventArgs e)
@@ -107,6 +136,12 @@ namespace CSharp_AzureDevopsNotifier
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 col.FillWeight = 25;
             }
+
+            // The Filters collection is edited in the details panel, not inline in this grid.
+            if (dataGridViewQueries.Columns.Contains(nameof(AzureDevOpsQuery.Filters)))
+            {
+                dataGridViewQueries.Columns[nameof(AzureDevOpsQuery.Filters)].Visible = false;
+            }
         }
 
         private int? GetCurrentQueryIndex()
@@ -124,14 +159,16 @@ namespace CSharp_AzureDevopsNotifier
 
         private void LoadDetails(int index)
         {
-            var currentQuery = _azureDevOpsSettings.Queries[index];
+            var currentQuery = bindingListQueries[index];
 
             textBoxName.Text = currentQuery.Name ?? string.Empty;
             checkBoxRunning.Checked = currentQuery.Running;
             comboBoxType.SelectedIndex = (int)currentQuery.Type;
-            labelRepositoryName.Text = currentQuery.RepositoryName ?? string.Empty;
+            textBoxRepositoryName.Text = currentQuery.RepositoryName ?? string.Empty;
 
-            var filters = currentQuery.Filters;
+            var filters = (currentQuery.Filters ?? [])
+                .Select(f => new FilterItem { Value = f })
+                .ToList();
 
             bindingListQueriesFilters = new(filters)
             {
@@ -142,10 +179,16 @@ namespace CSharp_AzureDevopsNotifier
             };
             bindingListQueriesFilters.AddingNew += (sender, e) =>
             {
-                e.NewObject = string.Empty;
+                e.NewObject = new FilterItem { Value = string.Empty };
             };
 
             dataGridViewQueriesFilters.DataSource = bindingListQueriesFilters;
+            if (dataGridViewQueriesFilters.Columns.Contains(nameof(FilterItem.Value)))
+            {
+                var valueColumn = dataGridViewQueriesFilters.Columns[nameof(FilterItem.Value)];
+                valueColumn.HeaderText = "Filter (WIQL condition)";
+                valueColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -155,7 +198,21 @@ namespace CSharp_AzureDevopsNotifier
             _azureDevOpsSettings.PersonalAccessToken = !string.IsNullOrWhiteSpace(textBoxPersonalAccessToken.Text) ? textBoxPersonalAccessToken.Text : null;
             _azureDevOpsSettings.ProjectName = !string.IsNullOrWhiteSpace(textBoxProjectName.Text) ? textBoxProjectName.Text : null;
 
-            //JsonHelpers<AzureDevOpsSettings>.Save(_pathSettings, _azureDevOpsSettings);
+            // Persist the queries edited in the grid (adds / deletes / detail edits).
+            _azureDevOpsSettings.Queries = bindingListQueries.ToList();
+
+            JsonHelpers<AzureDevOpsSettings>.Save(_pathSettings, _azureDevOpsSettings);
+
+            MessageBox.Show("Configuration saved.", "AzureDevopsNotifier", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+    }
+
+    /// <summary>
+    /// Editable wrapper around a single WIQL filter string so it can be bound,
+    /// shown and edited in a <see cref="DataGridView"/> (which cannot edit a bare string).
+    /// </summary>
+    public class FilterItem
+    {
+        public string Value { get; set; }
     }
 }

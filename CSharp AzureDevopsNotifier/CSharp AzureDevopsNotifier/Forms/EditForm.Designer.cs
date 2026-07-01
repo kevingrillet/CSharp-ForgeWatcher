@@ -301,6 +301,7 @@ namespace CSharp_AzureDevopsNotifier
             buttonQueriesAdd.TabIndex = 0;
             buttonQueriesAdd.Text = "Add";
             buttonQueriesAdd.UseVisualStyleBackColor = true;
+            buttonQueriesAdd.Click += ButtonQueriesAdd_Click;
             // 
             // buttonQueriesDelete
             // 
@@ -434,6 +435,7 @@ namespace CSharp_AzureDevopsNotifier
             buttonQueriesFiltersAdd.TabIndex = 0;
             buttonQueriesFiltersAdd.Text = "Add";
             buttonQueriesFiltersAdd.UseVisualStyleBackColor = true;
+            buttonQueriesFiltersAdd.Click += ButtonQueriesFiltersAdd_Click;
             // 
             // buttonQueriesFiltersDelete
             // 
@@ -443,6 +445,7 @@ namespace CSharp_AzureDevopsNotifier
             buttonQueriesFiltersDelete.TabIndex = 1;
             buttonQueriesFiltersDelete.Text = "Delete";
             buttonQueriesFiltersDelete.UseVisualStyleBackColor = true;
+            buttonQueriesFiltersDelete.Click += ButtonQueriesFiltersDelete_Click;
             // 
             // textBoxName
             // 

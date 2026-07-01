@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CSharp_AzureDevopsNotifier.Tests.Helpers
 {
@@ -16,7 +17,7 @@ namespace CSharp_AzureDevopsNotifier.Tests.Helpers
     {
         // GetNewPullRequests method retrieves a list of pull requests
         [Test]
-        public void Should_retrieve_list_of_pull_requests()
+        public async Task Should_retrieve_list_of_pull_requests()
         {
             // Arrange
             var gitClientMock = new Mock<GitHttpClient>(It.IsAny<Uri>(), It.IsAny<VssCredentials>());
@@ -31,7 +32,7 @@ namespace CSharp_AzureDevopsNotifier.Tests.Helpers
                 .ReturnsAsync(expectedPullRequests);
 
             // Act
-            var result = AzureDevOpsHelpers.GetNewPullRequests(gitClientMock.Object, projectName, repositoryName);
+            var result = await AzureDevOpsHelpers.GetNewPullRequestsAsync(gitClientMock.Object, projectName, repositoryName);
 
             // Assert
             Assert.That(result, Is.EqualTo(expectedPullRequests));
@@ -39,7 +40,7 @@ namespace CSharp_AzureDevopsNotifier.Tests.Helpers
 
         // GetWorkItems method retrieves a list of work items
         [Test]
-        public void Should_retrieve_list_of_work_items()
+        public async Task Should_retrieve_list_of_work_items()
         {
             // Arrange
             var workItemClientMock = new Mock<WorkItemTrackingHttpClient>(It.IsAny<Uri>(), It.IsAny<VssCredentials>());
@@ -54,7 +55,7 @@ namespace CSharp_AzureDevopsNotifier.Tests.Helpers
             workItemClientMock.Setup(x => x.GetWorkItemsAsync(It.IsAny<IEnumerable<int>>(), null, null, null, null, null, default)).ReturnsAsync(expectedWorkItems);
 
             // Act
-            var result = AzureDevOpsHelpers.GetWorkItems(workItemClientMock.Object, filters);
+            var result = await AzureDevOpsHelpers.GetWorkItemsAsync(workItemClientMock.Object, filters);
 
             // Assert
             Assert.That(result, Is.EqualTo(expectedWorkItems));
