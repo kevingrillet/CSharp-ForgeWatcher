@@ -12,6 +12,7 @@ namespace CSharp_AzureDevopsNotifier.Forms
     {
         private const string _pathSettings = @"Configurations\AzureDevOpsSettings.json";
         private readonly NotifyIcon _notificationIcon;
+        private EditForm _editForm;
         private AzureDevOpsManager _manager;
         private AzureDevOpsSettings _settings;
 
@@ -33,9 +34,16 @@ namespace CSharp_AzureDevopsNotifier.Forms
         /// <param name="e"></param>
         private void Edit(object sender, EventArgs e)
         {
-            var editForm = new EditForm(_pathSettings, _settings);
-            editForm.FormClosed += (sender, e) => { Refresh(null, null); };
-            editForm.Show();
+            // Only one edit window at a time; bring it to front if already open.
+            if (_editForm != null && !_editForm.IsDisposed)
+            {
+                _editForm.Activate();
+                return;
+            }
+
+            _editForm = new EditForm(_pathSettings, _settings);
+            _editForm.FormClosed += (sender, e) => { Refresh(null, null); };
+            _editForm.Show();
         }
 
         /// <summary>
@@ -54,17 +62,24 @@ namespace CSharp_AzureDevopsNotifier.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <exception cref="ApplicationException">If _settings.Path does not exists, BOOM!</exception>
         private void Refresh(object sender, EventArgs e)
         {
-            // Load config file
-            _settings = JsonHelpers<AzureDevOpsSettings>.Load(_pathSettings);
+            try
+            {
+                // Load config file
+                _settings = JsonHelpers<AzureDevOpsSettings>.Load(_pathSettings);
 
-            if (_manager != null)
-                _manager.Update(_settings);
-            else
-                _manager = new AzureDevOpsManager(_settings);
-            _ = _manager.RunAsync();
+                if (_manager != null)
+                    _manager.Update(_settings);
+                else
+                    _manager = new AzureDevOpsManager(_settings);
+                _ = _manager.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                // Bad / missing config must not crash the tray app at startup or on refresh.
+                ToastHelpers.ShowToastNotification("AzureDevopsNotifier - config error", ex.Message, null);
+            }
         }
 
         private void SetTrayIcon()
@@ -78,7 +93,7 @@ namespace CSharp_AzureDevopsNotifier.Forms
 
             // Static bottom menus
             contextMenuStrip.Items.AddRange(new ToolStripItem[] {
-                //new ToolStripMenuItem(nameof(Refresh), null, new EventHandler(Refresh)),
+                new ToolStripMenuItem(nameof(Refresh), null, new EventHandler(Refresh)),
                 new ToolStripMenuItem(nameof(Edit), null, new EventHandler(Edit)),
                 new ToolStripMenuItem(nameof(Exit), null, new EventHandler(Exit)),
             });
