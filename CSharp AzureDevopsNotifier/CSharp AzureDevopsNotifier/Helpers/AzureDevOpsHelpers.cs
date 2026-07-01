@@ -5,6 +5,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CSharp_AzureDevopsNotifier.Helpers
 {
@@ -49,14 +50,14 @@ namespace CSharp_AzureDevopsNotifier.Helpers
         /// <param name="projectName">Name of the project.</param>
         /// <param name="repositoryName">Name of the repository.</param>
         /// <returns>List of new pull requests.</returns>
-        public static List<GitPullRequest> GetNewPullRequests(GitHttpClient gitClient, string projectName, string repositoryName)
+        public static async Task<List<GitPullRequest>> GetNewPullRequestsAsync(GitHttpClient gitClient, string projectName, string repositoryName)
         {
             GitPullRequestSearchCriteria prSearchCriteria = new()
             {
                 Status = PullRequestStatus.Active
             };
 
-            return gitClient.GetPullRequestsAsync(projectName, repositoryName, prSearchCriteria).Result;
+            return await gitClient.GetPullRequestsAsync(projectName, repositoryName, prSearchCriteria);
         }
 
         /// <summary>
@@ -65,13 +66,13 @@ namespace CSharp_AzureDevopsNotifier.Helpers
         /// <param name="workItemClient">WorkItemTrackingHttpClient instance.</param>
         /// <param name="filters">List of filters.</param>
         /// <returns>List of new work items.</returns>
-        public static List<WorkItem> GetWorkItems(WorkItemTrackingHttpClient workItemClient, IList<string> filters)
+        public static async Task<List<WorkItem>> GetWorkItemsAsync(WorkItemTrackingHttpClient workItemClient, IList<string> filters)
         {
             string wiql = $"SELECT [System.Id], [System.Title], [System.State], [System.CreatedDate] FROM workitems WHERE {string.Join(" And ", filters)} ORDER BY [System.CreatedDate] DESC";
-            WorkItemQueryResult queryResult = workItemClient.QueryByWiqlAsync(new Wiql { Query = wiql }).Result;
+            WorkItemQueryResult queryResult = await workItemClient.QueryByWiqlAsync(new Wiql { Query = wiql });
             List<WorkItemReference> workItemReferences = queryResult.WorkItems.ToList();
 
-            return workItemClient.GetWorkItemsAsync(workItemReferences.Select(w => w.Id)).Result;
+            return await workItemClient.GetWorkItemsAsync(workItemReferences.Select(w => w.Id));
         }
 
         private static int GetItemId<TType>(TType item)
