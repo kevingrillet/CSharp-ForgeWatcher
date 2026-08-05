@@ -13,9 +13,16 @@ configurations lancent les mêmes quatre commandes, dans le même ordre.
 | Fichier | Plateforme | Déclencheur | Rôle |
 | --- | --- | --- | --- |
 | `.github/workflows/ci.yml` | GitHub Actions | `push` et `pull_request` sur `main` / `master` | Compilation Release, tests unitaires, contrôle de mise en forme |
+| `.github/workflows/codeql-analysis.yml` | GitHub Actions | `push` et `pull_request` sur `main`, plus le dimanche | Analyse statique de sécurité (CodeQL, C#) |
+| `.github/workflows/links.yml` | GitHub Actions | modification d'un `*.md`, plus le dimanche | Liens **internes** de la documentation (mode hors ligne) |
 | `.github/workflows/release.yml` | GitHub Actions | poussée d'un tag `v*` | Publication `win-x64`, archive ZIP, release GitHub |
+| `.github/workflows/dependabot-auto-merge.yml` | GitHub Actions | pull request ouverte par Dependabot | Fusion automatique des montées **patch** et **mineures** uniquement |
 | `.github/dependabot.yml` | GitHub | hebdomadaire (lundi 06:00, Europe/Paris) | Mises à jour des paquets NuGet et des actions |
 | `.gitlab-ci.yml` | GitLab CI | `push` et merge request | Mêmes contrôles, en trois étapes (`verification`, `build`, `test`) |
+
+CodeQL compile la solution **explicitement** (`build-mode: manual`) au lieu de s'en
+remettre à `autobuild` : le format `.slnx` exige un SDK ≥ 9.0.200, qu'il faut donc
+installer soi-même plutôt que d'espérer celui du runner.
 
 ---
 
@@ -32,7 +39,7 @@ Quatre contrôles, ni plus ni moins :
 3. **`dotnet format --verify-no-changes`** — le code respecte le `.editorconfig`
    (indentation, fins de ligne, espaces, tri des `using`). Cette vérification tourne
    dans une tâche séparée : un rouge ici signifie « reformate », pas « le code est cassé ».
-4. **`dotnet test -c Release`** — les 94 tests NUnit du domaine et de la couche
+4. **`dotnet test -c Release`** — les tests NUnit du domaine et de la couche
    application passent. Le rapport `.trx` est publié en artefact, y compris — et
    surtout — quand les tests échouent.
 
