@@ -11,7 +11,15 @@
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>fr-FR</NeutralLanguage>
     <Product>Forge Watcher</Product>
-    <Version>1.1.0</Version>
+
+    <!--
+      Version EN PRÉPARATION, c'est-à-dire celle que décrit la section « Non publié » du
+      CHANGELOG. Elle ne sert qu'aux compilations locales : lors d'une publication, le
+      numéro vient du tag git (« -p:Version=… » dans .github/workflows/release.yml), et
+      c'est lui qui fait foi. La tenir à jour évite qu'un binaire de développement
+      s'annonce sous le numéro de la version déjà publiée.
+    -->
+    <Version>1.2.0</Version>
 
     <!-- On documente le code : la doc XML est générée, mais on n'échoue pas sur les membres non documentés. -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

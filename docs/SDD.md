@@ -64,11 +64,18 @@ l'utilisateur, avec un **clic qui ouvre directement le bon endroit** dans le nav
 | ENF-6 | Code réutilisable et extensible | Clean architecture + règles en Strategy — §5 |
 | ENF-7 | Comportements vérifiables | Cœur métier sans dépendance Windows/réseau, testé unitairement |
 
-### 2.3 Hors périmètre (v1)
+### 2.3 Hors périmètre
 
-Écrire dans Azure DevOps (voter, répondre, compléter une PR) ; surveillance des
-pipelines et des work items ; support GitHub / GitLab (mais l'architecture le permet,
-cf. §8) ; authentification Entra ID / OAuth (PAT uniquement).
+**Aujourd'hui hors périmètre** : écrire dans la forge (voter, répondre, compléter une PR,
+relancer un pipeline) — la lecture seule est un choix, elle permet de se contenter d'un
+jeton restreint ; l'authentification Entra ID / OAuth / GitHub App (PAT uniquement) ; le
+temps réel, qui demanderait des *service hooks* et donc un point d'entrée HTTP joignable ;
+les objets autres que pull requests et pipelines — les **work items** en particulier, que
+surveillait le projet dont celui-ci descend, et dont le retour éventuel est décrit au §8.
+
+**Sorti du hors-périmètre depuis** : la surveillance des pipelines (v1.1.0), le support de
+GitHub et de GitLab et les comptes multiples (§8, [ADR-0004](adr/0004-adaptateur-github.md),
+[ADR-0005](adr/0005-comptes-multiples.md)).
 
 ---
 
@@ -246,7 +253,8 @@ Le menu de la zone de notification expose *Ouvrir le dossier de données* et
 | Besoin futur | Geste |
 |---|---|
 | Nouveau type de notification | Une classe dans `Detection/Rules` + `IsEnabled` + un test (skill `ajouter-notification`) |
-| Nouveau genre d'objet surveillé (work items, alertes…) | Un type implémentant `INotifiableEvent` + un détecteur dédié ; l'affichage n'est pas touché |
+| Nouveau genre d'objet surveillé (alertes, releases…) | Un type implémentant `INotifiableEvent` + un détecteur dédié ; l'affichage n'est pas touché |
+| **Work items / bugs** (par requête WIQL) | Le cas concret du précédent, et le seul que le projet ancêtre (`CSharp AzureDevopsNotifier`, branche `legacy/azure-devops-notifier`) savait faire et que celui-ci ne fait pas. Il demanderait : une méthode de requête sur `ISourceControlGateway` — l'équivalent WIQL n'existant ni sur GitHub ni sur GitLab, ce serait la première capacité déclarée par forge —, un `WorkItemEvent`, un détecteur, et un onglet de sélection. Le reste (notification, lien cliquable, mémorisation, purge) est déjà générique. Non prévu tant que le besoin n'est pas réel |
 | Support d'une autre forge | **Fait pour GitHub et GitLab** : une implémentation de `ISourceControlGateway` + un générateur de liens, sélectionnés par le fournisseur du compte, sans qu'aucune règle de détection ni aucune vue change (SPEC-FORGE, [ADR-0004](adr/0004-adaptateur-github.md), skill `ajouter-une-forge`). Une quatrième forge de type REST/`snake_case` hérite en plus de `RestGatewayBase` |
 | Surveiller plusieurs forges à la fois | **Fait** : la configuration porte une liste de comptes, l'état est cloisonné par compte ([ADR-0005](adr/0005-comptes-multiples.md), SPEC-CFG-008) |
 | Notifications Teams / webhook | Une implémentation de `INotificationPresenter` |

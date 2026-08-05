@@ -10,6 +10,15 @@ suit [SemVer](https://semver.org/lang/fr/). Les catégories utilisées sont *Ajo
 > ajoute une ligne dans `[Non publié]`, en même temps que la spec et le scénario Gherkin
 > correspondants. La checklist de `.github/pull_request_template.md` le rappelle.
 
+> **Publier une version** : la section `[Non publié]` porte le numéro annoncé par
+> `<Version>` dans `Directory.Build.props` — **1.2.0** aujourd'hui. Publier, c'est
+> renommer cette section en `[1.2.0] — <date>`, ouvrir une nouvelle section
+> `[Non publié]`, monter `<Version>` au numéro suivant, puis pousser le tag `v1.2.0` :
+> c'est ce tag qui déclenche `release.yml` et qui fixe la version du binaire.
+>
+> Les versions 1.0.0 et 1.1.0 sont antérieures à la mise sous git de la refonte : aucun
+> tag ne leur correspond, elles ne sont documentées qu'ici.
+
 ## [Non publié]
 
 ### Ajouté

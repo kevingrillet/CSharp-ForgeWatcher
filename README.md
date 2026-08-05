@@ -499,6 +499,10 @@ Le SVG est la source de vérité ; le `.ico` multi-résolutions en est dérivé.
 
 * **Lecture seule** : impossible de voter, répondre, compléter une PR ou relancer un
   pipeline depuis l'application (choix assumé : un PAT en lecture seule suffit).
+* **Pull requests et pipelines uniquement** : ni work items, ni tickets, ni issues. Le
+  projet dont celui-ci descend surveillait des work items Azure DevOps par requête WIQL ;
+  la fonction n'a pas été reprise, faute d'équivalent sur GitHub et GitLab. Le geste que
+  cela demanderait est décrit dans [SDD §8](docs/SDD.md#8-extensibilité--scénarios-anticipés).
 * **Sondage, pas temps réel** : un événement est vu au cycle suivant (défaut 3 min). Le
   temps réel exigerait des *service hooks* Azure DevOps, donc des droits d'administration
   de projet et un point d'entrée HTTP joignable.
