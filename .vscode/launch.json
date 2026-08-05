@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Débogage de l'application résidente. Elle n'ouvre pas de fenêtre au démarrage
+      // (sauf si la configuration est incomplète) : l'icône apparaît dans la zone de
+      // notification, éventuellement derrière la flèche des icônes masquées.
+      "name": "Forge Watcher (débogage)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/CSharpForgeWatcher.Ui/bin/Debug/net9.0-windows10.0.17763.0/ForgeWatcher.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/CSharpForgeWatcher.Ui",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      // Attache le débogueur à une instance déjà lancée (utile pour observer un cycle de
+      // surveillance sans redémarrer l'application).
+      "name": "Attacher à un processus",
+      "type": "coreclr",
+      "request": "attach"
+    }
+  ]
+}

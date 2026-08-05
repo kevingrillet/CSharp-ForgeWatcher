@@ -1,7 +1,53 @@
+# Mises à jour automatiques des dépendances (Dependabot).
+#
+# Deux écosystèmes sont surveillés, une fois par semaine :
+#   - nuget          : les PackageReference des .csproj (recherche récursive depuis « / »)
+#   - github-actions : les actions épinglées dans .github/workflows/*.yml
+#
+# Chaque proposition arrive sous forme de pull request, donc validée par la CI
+# (compilation Release + tests + mise en forme) avant toute fusion.
+
 version: 2
+
 updates:
-  # Maintain dependencies for GitHub Actions
-  - package-ecosystem: "github-actions"
+  # --- Paquets NuGet --------------------------------------------------------
+  - package-ecosystem: nuget
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    # Au-delà de 5 PR ouvertes, Dependabot attend qu'on en traite avant d'en créer.
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+      include: scope
+    # Les paquets versionnés ensemble par Microsoft sont regroupés dans une seule PR :
+    # les monter séparément produit des combinaisons de versions jamais testées.
+    groups:
+      microsoft-extensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+          - "System.Security.Cryptography.ProtectedData"
+      outillage-de-test:
+        patterns:
+          - "Microsoft.NET.Test.Sdk"
+          - "NUnit"
+          - "NUnit3TestAdapter"
+          - "NUnit.Analyzers"
+
+  # --- Actions GitHub -------------------------------------------------------
+  # Les actions sont épinglées par tag majeur (@v4, @v2) : Dependabot ne proposera
+  # donc une PR que lorsqu'une nouvelle version majeure sortira.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: scope

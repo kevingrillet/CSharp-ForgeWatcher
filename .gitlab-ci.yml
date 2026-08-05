@@ -1,0 +1,175 @@
+# Intégration continue GitLab de la solution « Forge Watcher ».
+#
+# Le pipeline reproduit exactement les mêmes étapes que la CI GitHub :
+#     dotnet restore -> dotnet build -c Release -> dotnet format --verify-no-changes
+#     -> dotnet test -c Release
+#
+# PRÉREQUIS : un runner Windows portant le tag « windows » et disposant du SDK .NET 9
+# (>= 9.0.200, indispensable pour lire le fichier solution au format .slnx).
+# Sans ce runner, les tâches « ...:windows » restent en attente indéfiniment.
+# La tâche facultative « compilation-partielle:linux » permet malgré tout de valider
+# la partie multiplateforme du code (voir le commentaire de cette tâche et docs/CI.md).
+#
+# NOTE : les chemins sont écrits en clair dans les scripts plutôt que via des variables.
+# C'est volontaire : l'écriture d'une variable dépend du shell du runner Windows
+# ($env:NOM en PowerShell, %NOM% en cmd, $NOM en bash), alors qu'un chemin littéral
+# fonctionne dans les trois.
+
+stages:
+  - verification
+  - build
+  - test
+
+variables:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+  # Le cache GitLab ne sait embarquer que des chemins situés SOUS $CI_PROJECT_DIR.
+  # On déplace donc le dossier des paquets NuGet dans l'espace de travail, sinon
+  # le cache déclaré plus bas serait silencieusement vide.
+  NUGET_PACKAGES: "$CI_PROJECT_DIR/.nuget/packages"
+  # L'historique complet est inutile pour compiler : checkout plus rapide.
+  GIT_DEPTH: "20"
+
+default:
+  # Un push plus récent annule le pipeline en cours (si l'annulation automatique
+  # des pipelines redondants est activée dans les réglages du projet).
+  interruptible: true
+
+# Évite les pipelines en double : une seule exécution par merge request ouverte.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG
+
+# ---------------------------------------------------------------------------
+# Socle commun aux tâches Windows
+# ---------------------------------------------------------------------------
+# La clé de cache est volontairement fixe : le cache NuGet est additif, une
+# restauration ajoute simplement les paquets manquants puis republie le cache.
+.socle-windows:
+  tags:
+    - windows
+  cache:
+    key: nuget-windows
+    paths:
+      - .nuget/packages
+
+# ---------------------------------------------------------------------------
+# Étape 1 : mise en forme
+# ---------------------------------------------------------------------------
+# Tâche isolée pour que l'échec soit explicite : un rouge ici signifie
+# « lance dotnet format », pas « le code est cassé ».
+#
+# ATTENTION (fins de ligne) : le .editorconfig impose end_of_line = crlf. Le contrôle
+# ne passe donc que si la copie de travail contient des CRLF. Sur un runner Windows
+# avec core.autocrlf=true c'est le cas ; ajouter un .gitattributes contenant
+# « * text=auto eol=crlf » rendrait ce comportement déterministe partout.
+mise-en-forme:windows:
+  stage: verification
+  extends: .socle-windows
+  script:
+    # dotnet format charge les projets via MSBuild : la restauration est requise.
+    - dotnet restore CSharp-ForgeWatcher.slnx
+    # --verify-no-changes ne réécrit aucun fichier : la commande sort en erreur
+    # (code 2) et liste les emplacements à reformater.
+    - dotnet format CSharp-ForgeWatcher.slnx --verify-no-changes --no-restore
+
+# ---------------------------------------------------------------------------
+# Étape 2 : compilation
+# ---------------------------------------------------------------------------
+compilation:windows:
+  stage: build
+  extends: .socle-windows
+  # « needs: [] » démarre la compilation sans attendre l'étape de vérification,
+  # comme sur GitHub où mise en forme et compilation tournent en parallèle. Un écart
+  # de formatage n'empêche donc pas de savoir si le code compile et si les tests passent.
+  needs: []
+  script:
+    - dotnet restore CSharp-ForgeWatcher.slnx
+    # Aucun paramètre pour contourner les avertissements : la solution est censée
+    # compiler sans le moindre warning (TreatWarningsAsErrors).
+    - dotnet build CSharp-ForgeWatcher.slnx --no-restore -c Release
+  # Les sorties de compilation (bin + obj) sont transmises à la tâche de tests,
+  # ce qui permet d'y utiliser --no-build et de ne pas recompiler deux fois.
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - src/*/bin/Release/
+      - src/*/obj/
+      - tests/*/bin/Release/
+      - tests/*/obj/
+
+# ---------------------------------------------------------------------------
+# Étape 3 : tests unitaires
+# ---------------------------------------------------------------------------
+tests:windows:
+  stage: test
+  extends: .socle-windows
+  needs:
+    - job: "compilation:windows"
+      artifacts: true
+  script:
+    - dotnet test CSharp-ForgeWatcher.slnx --no-build -c Release --logger trx --results-directory TestResults
+  artifacts:
+    # « when: always » : le rapport est surtout utile quand les tests échouent.
+    when: always
+    expire_in: 2 weeks
+    paths:
+      - TestResults/
+    # Volontairement PAS de « reports: junit » : dotnet test produit ici du TRX
+    # (format Visual Studio), que GitLab ne sait pas lire. Les fichiers .trx sont
+    # donc publiés en artefacts bruts, à télécharger depuis la tâche.
+    #
+    # Pour alimenter l'onglet « Tests » de la merge request, deux options :
+    #   1. ajouter le paquet JunitXml.TestLogger au projet de tests, puis remplacer
+    #      le logger ci-dessus par :
+    #        --logger "junit;LogFilePath=TestResults/resultats.xml"
+    #   2. convertir le TRX sans toucher au projet, en ajoutant à cette tâche :
+    #        after_script:
+    #          - dotnet tool install trx2junit --tool-path .outils
+    #          - .outils/trx2junit TestResults/*.trx
+    #      puis en déclarant ici :
+    #        reports:
+    #          junit: TestResults/*.xml
+
+# ---------------------------------------------------------------------------
+# Tâche FACULTATIVE : validation partielle sur Linux
+# ---------------------------------------------------------------------------
+# À quoi ça sert : dépanner quand aucun runner Windows n'est disponible.
+#
+# Ce qui est vérifié : uniquement les projets multiplateformes, c'est-à-dire
+#   - CSharpForgeWatcher.Domain       (net9.0)
+#   - CSharpForgeWatcher.Application  (net9.0)
+#   - CSharpForgeWatcher.Tests        (net9.0, référence les deux précédents)
+#
+# Ce qui n'est PAS vérifié, et ne peut pas l'être sur Linux :
+#   - CSharpForgeWatcher.Infrastructure (net9.0-windows : DPAPI, registre Windows)
+#   - CSharpForgeWatcher.Ui             (net9.0-windows10.0.17763.0 : WinForms, toasts)
+#   - la mise en forme (dotnet format), car le contrôle des fins de ligne CRLF
+#     échouerait sur une copie de travail Linux (voir plus haut)
+#
+# Conséquence : un vert ici ne veut PAS dire que la solution compile. C'est pour
+# cela que la tâche est manuelle et tolérante à l'échec — elle ne doit jamais
+# donner l'illusion d'un pipeline complet.
+compilation-partielle:linux:
+  stage: verification
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  when: manual
+  allow_failure: true
+  cache:
+    key: nuget-linux
+    paths:
+      - .nuget/packages
+  script:
+    - dotnet restore tests/CSharpForgeWatcher.Tests/CSharpForgeWatcher.Tests.csproj
+    - dotnet build tests/CSharpForgeWatcher.Tests/CSharpForgeWatcher.Tests.csproj --no-restore -c Release
+    - dotnet test tests/CSharpForgeWatcher.Tests/CSharpForgeWatcher.Tests.csproj --no-build -c Release --logger trx --results-directory TestResults
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - TestResults/

@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common.AppName" xml:space="preserve">
+    <value>Forge Watcher</value>
+  </data>
+  <data name="Common.Empty" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Config.AllAccountsDisabled" xml:space="preserve">
+    <value>Tous les comptes sont désactivés : activez-en au moins un.</value>
+  </data>
+  <data name="Config.MaxNotificationsTooLow" xml:space="preserve">
+    <value>Le nombre maximal de notifications par cycle doit être supérieur ou égal à 1.</value>
+  </data>
+  <data name="Config.NoAccount" xml:space="preserve">
+    <value>Ajoutez un compte : une forge, son adresse et un jeton d'accès personnel.</value>
+  </data>
+  <data name="Config.NoSelection" xml:space="preserve">
+    <value>Sélectionnez au moins un dépôt ou un pipeline à surveiller.</value>
+  </data>
+  <data name="Config.PollIntervalTooShort" xml:space="preserve">
+    <value>L'intervalle de sondage doit être d'au moins {0} secondes.</value>
+  </data>
+  <data name="Config.ProviderUnsupported" xml:space="preserve">
+    <value>{0} : le fournisseur {1} n'est pas encore pris en charge — seuls {2} sont implémentés.</value>
+  </data>
+  <data name="Config.TokenMissing" xml:space="preserve">
+    <value>{0} : le jeton d'accès personnel (PAT) est requis.</value>
+  </data>
+  <data name="Config.UrlInvalid" xml:space="preserve">
+    <value>{0} : {1} doit être une adresse http(s) absolue.</value>
+  </data>
+  <data name="Config.UrlMissing" xml:space="preserve">
+    <value>{0} : {1} est requise (ex. {2}).</value>
+  </data>
+  <data name="Event.Comment" xml:space="preserve">
+    <value>{0}{1} : {2}{3}</value>
+  </data>
+  <data name="Event.Comment.File" xml:space="preserve">
+    <value> [{0}]</value>
+  </data>
+  <data name="Event.Comment.More" xml:space="preserve">
+    <value> (+{0} autre(s) message(s))</value>
+  </data>
+  <data name="Event.Pipeline.Actor" xml:space="preserve">
+    <value> — déclenché par {0}</value>
+  </data>
+  <data name="Event.Pipeline.Branch" xml:space="preserve">
+    <value> sur {0}</value>
+  </data>
+  <data name="Event.Pipeline.Failed" xml:space="preserve">
+    <value>Exécution en {0}{1}{2}</value>
+  </data>
+  <data name="Event.Pipeline.Recovered" xml:space="preserve">
+    <value>Exécution en succès{0} après l'échec de {1}</value>
+  </data>
+  <data name="Event.PrStatus.Abandoned" xml:space="preserve">
+    <value>Pull request abandonnée</value>
+  </data>
+  <data name="Event.PrStatus.Completed" xml:space="preserve">
+    <value>Pull request complétée et fusionnée</value>
+  </data>
+  <data name="Event.PrStatus.DraftPublished" xml:space="preserve">
+    <value>Brouillon publié : la pull request est prête pour la relecture</value>
+  </data>
+  <data name="Event.PrStatus.Other" xml:space="preserve">
+    <value>Pull request {0}</value>
+  </data>
+  <data name="Event.PrStatus.Reactivated" xml:space="preserve">
+    <value>Pull request réactivée</value>
+  </data>
+  <data name="Event.PullRequestCreated" xml:space="preserve">
+    <value>Ouverte par {0}{1}{2}</value>
+  </data>
+  <data name="Event.PullRequestCreated.Draft" xml:space="preserve">
+    <value> (brouillon)</value>
+  </data>
+  <data name="Event.PullRequestCreated.Target" xml:space="preserve">
+    <value> vers {0}</value>
+  </data>
+  <data name="Event.ReviewerAssigned" xml:space="preserve">
+    <value>Votre relecture est demandée par {0}{1}</value>
+  </data>
+  <data name="Event.ReviewerAssigned.Required" xml:space="preserve">
+    <value> (relecteur obligatoire)</value>
+  </data>
+  <data name="Event.Thread.Reactivated" xml:space="preserve">
+    <value>Discussion réactivée ({0})</value>
+  </data>
+  <data name="Event.Thread.Resolved" xml:space="preserve">
+    <value>Discussion marquée « {0} »</value>
+  </data>
+  <data name="Event.Thread.WithExcerpt" xml:space="preserve">
+    <value>{0} — {1}</value>
+  </data>
+  <data name="Event.Vote" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
+  <data name="Forge.Error.CallFailed" xml:space="preserve">
+    <value>Appel {0} en échec ({1}). {2}</value>
+  </data>
+  <data name="Forge.Error.EmptyResponse" xml:space="preserve">
+    <value>{0} a renvoyé une réponse vide.</value>
+  </data>
+  <data name="Forge.Error.Forbidden" xml:space="preserve">
+    <value>Accès refusé (403) : le jeton n'a pas les autorisations de lecture nécessaires sur cette ressource.</value>
+  </data>
+  <data name="Forge.Error.RateLimited" xml:space="preserve">
+    <value>{0} limite temporairement les appels (429).</value>
+  </data>
+  <data name="Forge.Error.Server" xml:space="preserve">
+    <value>{0} rencontre un problème serveur ({1}).</value>
+  </data>
+  <data name="Forge.Error.Timeout" xml:space="preserve">
+    <value>Délai dépassé lors de l'appel à {0}.</value>
+  </data>
+  <data name="Forge.Error.Unauthorized" xml:space="preserve">
+    <value>{0} a refusé le jeton d'accès personnel (401).</value>
+  </data>
+  <data name="Forge.Error.Unreachable" xml:space="preserve">
+    <value>{0} est injoignable ({1}).</value>
+  </data>
+  <data name="Forge.Error.UnreadableResponse" xml:space="preserve">
+    <value>La réponse de {0} n'a pas pu être interprétée.</value>
+  </data>
+  <data name="Kind.CommentOnMyPullRequest.Description" xml:space="preserve">
+    <value>Nouveau commentaire sur une PR dont vous êtes l'auteur.</value>
+  </data>
+  <data name="Kind.CommentOnMyPullRequest.Label" xml:space="preserve">
+    <value>Commentaire sur votre PR</value>
+  </data>
+  <data name="Kind.CommentOnReviewedPullRequest.Description" xml:space="preserve">
+    <value>Nouveau commentaire sur une PR dont vous êtes relecteur.</value>
+  </data>
+  <data name="Kind.CommentOnReviewedPullRequest.Label" xml:space="preserve">
+    <value>Commentaire sur une PR que vous relisez</value>
+  </data>
+  <data name="Kind.MentionedInComment.Description" xml:space="preserve">
+    <value>Quelqu'un vous mentionne (@vous) dans un commentaire.</value>
+  </data>
+  <data name="Kind.MentionedInComment.Label" xml:space="preserve">
+    <value>Vous êtes mentionné</value>
+  </data>
+  <data name="Kind.PipelineFailed.Description" xml:space="preserve">
+    <value>Une exécution d'un pipeline surveillé se termine en échec.</value>
+  </data>
+  <data name="Kind.PipelineFailed.Label" xml:space="preserve">
+    <value>Pipeline en échec</value>
+  </data>
+  <data name="Kind.PipelineRecovered.Description" xml:space="preserve">
+    <value>Un pipeline surveillé repasse au vert après un échec.</value>
+  </data>
+  <data name="Kind.PipelineRecovered.Label" xml:space="preserve">
+    <value>Pipeline de nouveau au vert</value>
+  </data>
+  <data name="Kind.PullRequestCreated.Description" xml:space="preserve">
+    <value>Une nouvelle PR est créée dans un dépôt surveillé.</value>
+  </data>
+  <data name="Kind.PullRequestCreated.Label" xml:space="preserve">
+    <value>Nouvelle PR</value>
+  </data>
+  <data name="Kind.PullRequestStateChanged.Description" xml:space="preserve">
+    <value>Une PR qui vous concerne est complétée, abandonnée ou publiée.</value>
+  </data>
+  <data name="Kind.PullRequestStateChanged.Label" xml:space="preserve">
+    <value>État de PR modifié</value>
+  </data>
+  <data name="Kind.ReplyToMyComment.Description" xml:space="preserve">
+    <value>Quelqu'un répond dans une discussion où vous avez écrit.</value>
+  </data>
+  <data name="Kind.ReplyToMyComment.Label" xml:space="preserve">
+    <value>Réponse à votre commentaire</value>
+  </data>
+  <data name="Kind.ReviewerAssigned.Description" xml:space="preserve">
+    <value>On vous ajoute comme relecteur d'une PR.</value>
+  </data>
+  <data name="Kind.ReviewerAssigned.Label" xml:space="preserve">
+    <value>Vous êtes relecteur</value>
+  </data>
+  <data name="Kind.ThreadStatusChanged.Description" xml:space="preserve">
+    <value>Une discussion qui vous concerne est résolue ou réactivée.</value>
+  </data>
+  <data name="Kind.ThreadStatusChanged.Label" xml:space="preserve">
+    <value>Discussion mise à jour</value>
+  </data>
+  <data name="Kind.VoteChanged.Description" xml:space="preserve">
+    <value>Un relecteur approuve, rejette ou attend une correction sur votre PR.</value>
+  </data>
+  <data name="Kind.VoteChanged.Label" xml:space="preserve">
+    <value>Vote sur votre PR</value>
+  </data>
+  <data name="PipelineResult.Canceled" xml:space="preserve">
+    <value>annulée</value>
+  </data>
+  <data name="PipelineResult.Failed" xml:space="preserve">
+    <value>échec</value>
+  </data>
+  <data name="PipelineResult.PartiallySucceeded" xml:space="preserve">
+    <value>succès partiel</value>
+  </data>
+  <data name="PipelineResult.Succeeded" xml:space="preserve">
+    <value>succès</value>
+  </data>
+  <data name="PipelineResult.Unknown" xml:space="preserve">
+    <value>inconnu</value>
+  </data>
+  <data name="Poll.Failure" xml:space="preserve">
+    <value>Échec : {0}</value>
+  </data>
+  <data name="Poll.NotConfigured" xml:space="preserve">
+    <value>Configuration incomplète</value>
+  </data>
+  <data name="Poll.Pending" xml:space="preserve">
+    <value>Surveillance en attente</value>
+  </data>
+  <data name="Poll.ReadFailed.Title" xml:space="preserve">
+    <value>Forge Watcher — lecture impossible</value>
+  </data>
+  <data name="Poll.Skipped" xml:space="preserve">
+    <value>Cycle déjà en cours</value>
+  </data>
+  <data name="Poll.Warning.AccountFailed" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="Poll.Warning.AccountPrefixed" xml:space="preserve">
+    <value>{0} — {1}</value>
+  </data>
+  <data name="Poll.Warning.NoRepository" xml:space="preserve">
+    <value>aucun dépôt surveillé n'a pu être lu.</value>
+  </data>
+  <data name="Poll.Warning.Pipelines" xml:space="preserve">
+    <value>Pipelines de {0} : {1}</value>
+  </data>
+  <data name="Poll.Warning.PullRequest" xml:space="preserve">
+    <value>PR !{0} ({1}) : {2}</value>
+  </data>
+  <data name="Poll.Warning.Repository" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="Poll.Warning.Threads" xml:space="preserve">
+    <value>Discussions de la PR !{0} : {1}</value>
+  </data>
+  <data name="Preference.Language.English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Preference.Language.French" xml:space="preserve">
+    <value>Français</value>
+  </data>
+  <data name="Preference.Language.System" xml:space="preserve">
+    <value>Automatique (suit Windows)</value>
+  </data>
+  <data name="Preference.Theme.Dark" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="Preference.Theme.Light" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="Preference.Theme.System" xml:space="preserve">
+    <value>Automatique (suit Windows)</value>
+  </data>
+  <data name="PrStatus.Abandoned" xml:space="preserve">
+    <value>abandonnée</value>
+  </data>
+  <data name="PrStatus.Active" xml:space="preserve">
+    <value>active</value>
+  </data>
+  <data name="PrStatus.Completed" xml:space="preserve">
+    <value>complétée</value>
+  </data>
+  <data name="PrStatus.Unknown" xml:space="preserve">
+    <value>inconnue</value>
+  </data>
+  <data name="Screen.Account.Edit" xml:space="preserve">
+    <value>Compte — {0}</value>
+  </data>
+  <data name="Screen.Account.Enabled" xml:space="preserve">
+    <value>Surveiller ce compte</value>
+  </data>
+  <data name="Screen.Account.ForgeChanged" xml:space="preserve">
+    <value>Les {0} élément(s) surveillés sur ce compte ont été sélectionnés sur l'ancienne forge et ne seront pas lisibles sur la nouvelle.&#13;&#10;&#13;&#10;Retirer la sélection et continuer ?</value>
+  </data>
+  <data name="Screen.Account.Invalid" xml:space="preserve">
+    <value>Ce compte est incomplet :&#13;&#10;&#13;&#10;{0}</value>
+  </data>
+  <data name="Screen.Account.Label" xml:space="preserve">
+    <value>Libellé</value>
+  </data>
+  <data name="Screen.Account.LabelPlaceholder" xml:space="preserve">
+    <value>(laisser vide pour un libellé déduit de l'adresse)</value>
+  </data>
+  <data name="Screen.Account.New" xml:space="preserve">
+    <value>Nouveau compte</value>
+  </data>
+  <data name="Screen.Account.Provider" xml:space="preserve">
+    <value>Forge</value>
+  </data>
+  <data name="Screen.Account.Test" xml:space="preserve">
+    <value>Tester la connexion</value>
+  </data>
+  <data name="Screen.Account.TestIdle" xml:space="preserve">
+    <value>Non testée.</value>
+  </data>
+  <data name="Screen.Account.TestOk" xml:space="preserve">
+    <value>Connecté en tant que {0}.</value>
+  </data>
+  <data name="Screen.Account.TestRunning" xml:space="preserve">
+    <value>Test en cours…</value>
+  </data>
+  <data name="Screen.Account.TestTimeout" xml:space="preserve">
+    <value>Délai dépassé : le serveur n'a pas répondu.</value>
+  </data>
+  <data name="Screen.Account.TestTokenMissing" xml:space="preserve">
+    <value>Renseignez le jeton d'accès personnel.</value>
+  </data>
+  <data name="Screen.Account.TestTokenNeeded" xml:space="preserve">
+    <value>Test impossible sans ressaisir le jeton (il est chiffré).</value>
+  </data>
+  <data name="Screen.Account.TestUrlMissing" xml:space="preserve">
+    <value>Renseignez {0}.</value>
+  </data>
+  <data name="Screen.Account.Token" xml:space="preserve">
+    <value>Jeton d'accès personnel</value>
+  </data>
+  <data name="Screen.Account.TokenEmpty" xml:space="preserve">
+    <value>Collez votre jeton ici</value>
+  </data>
+  <data name="Screen.Account.TokenPage" xml:space="preserve">
+    <value>Créer un jeton d'accès personnel</value>
+  </data>
+  <data name="Screen.Account.TokenStored" xml:space="preserve">
+    <value>(jeton enregistré — laissez vide pour le conserver)</value>
+  </data>
+  <data name="Screen.Accounts.Empty" xml:space="preserve">
+    <value>Aucun compte. Cliquez sur « Ajouter… ».</value>
+  </data>
+  <data name="Screen.Accounts.Explanation" xml:space="preserve">
+    <value>Plusieurs forges peuvent être surveillées en même temps : chaque compte a son adresse, son jeton et sa propre sélection de dépôts et de pipelines.&#13;&#10;&#13;&#10;Les jetons sont chiffrés avec DPAPI (compte Windows courant) : le fichier de configuration est inutilisable sur une autre machine ou par un autre utilisateur.&#13;&#10;&#13;&#10;L'application ne fait que lire : un jeton en lecture seule suffit.</value>
+  </data>
+  <data name="Screen.Accounts.RemoveConfirm" xml:space="preserve">
+    <value>Retirer le compte « {0} » ?{1}</value>
+  </data>
+  <data name="Screen.Accounts.RemoveDetail" xml:space="preserve">
+    <value> Ses {0} élément(s) surveillés seront oubliés.</value>
+  </data>
+  <data name="Screen.Accounts.Summary" xml:space="preserve">
+    <value>{0} compte(s), dont {1} surveillé(s) · {2} élément(s) suivi(s).</value>
+  </data>
+  <data name="Screen.Activity.Column.Detail" xml:space="preserve">
+    <value>Détail</value>
+  </data>
+  <data name="Screen.Activity.Column.Kind" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Screen.Activity.Column.Subject" xml:space="preserve">
+    <value>Pull request</value>
+  </data>
+  <data name="Screen.Activity.Column.Time" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="Screen.Activity.Detail" xml:space="preserve">
+    <value>{0}  ({1})</value>
+  </data>
+  <data name="Screen.Activity.Empty" xml:space="preserve">
+    <value>Aucune activité détectée pour l'instant.&#13;&#10;Les événements apparaîtront ici au fil des cycles de surveillance.</value>
+  </data>
+  <data name="Screen.Activity.Open" xml:space="preserve">
+    <value>Ouvrir dans le navigateur</value>
+  </data>
+  <data name="Screen.Activity.Title" xml:space="preserve">
+    <value>Forge Watcher — activité récente</value>
+  </data>
+  <data name="Screen.Advanced.ConfigurationFile" xml:space="preserve">
+    <value>Configuration : {0}</value>
+  </data>
+  <data name="Screen.Advanced.Files" xml:space="preserve">
+    <value>Fichiers de l'application</value>
+  </data>
+  <data name="Screen.Advanced.LogFile" xml:space="preserve">
+    <value>Journal : {0}</value>
+  </data>
+  <data name="Screen.Advanced.NotificationCheck" xml:space="preserve">
+    <value>Vérification des notifications</value>
+  </data>
+  <data name="Screen.Advanced.NotificationHint" xml:space="preserve">
+    <value>Affiche une notification d'exemple. Si rien n'apparaît, les toasts Windows sont&#13;&#10;bloqués et l'application basculera sur les bulles d'info.</value>
+  </data>
+  <data name="Screen.Advanced.OpenFolder" xml:space="preserve">
+    <value>Ouvrir le dossier de données</value>
+  </data>
+  <data name="Screen.Advanced.OpenFolderFailed" xml:space="preserve">
+    <value>Ouverture du dossier impossible : {0}</value>
+  </data>
+  <data name="Screen.Advanced.Reset" xml:space="preserve">
+    <value>Réinitialisation</value>
+  </data>
+  <data name="Screen.Advanced.ResetButton" xml:space="preserve">
+    <value>Réinitialiser l'état surveillé</value>
+  </data>
+  <data name="Screen.Advanced.ResetConfirm" xml:space="preserve">
+    <value>Réinitialiser l'état surveillé ? Le prochain cycle sera silencieux.</value>
+  </data>
+  <data name="Screen.Advanced.ResetDone" xml:space="preserve">
+    <value>État réinitialisé.</value>
+  </data>
+  <data name="Screen.Advanced.ResetHint" xml:space="preserve">
+    <value>Efface la mémoire de surveillance de tous les comptes. Le prochain cycle réapprend&#13;&#10;l'état courant sans émettre de notification. Aucune donnée distante n'est modifiée.</value>
+  </data>
+  <data name="Screen.Advanced.SampleNotification" xml:space="preserve">
+    <value>Notification de test de Forge Watcher.</value>
+  </data>
+  <data name="Screen.Advanced.SamplePullRequest" xml:space="preserve">
+    <value>Exemple : corrige le calcul des heures</value>
+  </data>
+  <data name="Screen.Advanced.StateFile" xml:space="preserve">
+    <value>État surveillé : {0}</value>
+  </data>
+  <data name="Screen.Advanced.TestNotification" xml:space="preserve">
+    <value>Tester une notification</value>
+  </data>
+  <data name="Screen.Button.Add" xml:space="preserve">
+    <value>Ajouter…</value>
+  </data>
+  <data name="Screen.Button.Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Screen.Button.Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Screen.Button.Confirm" xml:space="preserve">
+    <value>Valider</value>
+  </data>
+  <data name="Screen.Button.Edit" xml:space="preserve">
+    <value>Modifier…</value>
+  </data>
+  <data name="Screen.Button.Reload" xml:space="preserve">
+    <value>Recharger</value>
+  </data>
+  <data name="Screen.Button.Remove" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="Screen.Button.Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="Screen.FatalError" xml:space="preserve">
+    <value>Une erreur inattendue est survenue :&#13;&#10;&#13;&#10;{0}&#13;&#10;&#13;&#10;Le détail est consigné dans le journal ({1}).</value>
+  </data>
+  <data name="Screen.Filter.Placeholder" xml:space="preserve">
+    <value>Filtrer…</value>
+  </data>
+  <data name="Screen.Menu.Activity" xml:space="preserve">
+    <value>Activité récente…</value>
+  </data>
+  <data name="Screen.Menu.ActivityUnread" xml:space="preserve">
+    <value>Activité récente ({0} non lu(s))…</value>
+  </data>
+  <data name="Screen.Menu.MarkAllRead" xml:space="preserve">
+    <value>Tout marquer comme lu</value>
+  </data>
+  <data name="Screen.Menu.NoPullRequest" xml:space="preserve">
+    <value>(aucune pull request active)</value>
+  </data>
+  <data name="Screen.Menu.Pipelines" xml:space="preserve">
+    <value>Pipelines</value>
+  </data>
+  <data name="Screen.Menu.PipelinesFailing" xml:space="preserve">
+    <value>Pipelines ({0} en échec)</value>
+  </data>
+  <data name="Screen.Menu.PullRequests" xml:space="preserve">
+    <value>Pull requests suivies</value>
+  </data>
+  <data name="Screen.Menu.Quit" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="Screen.Menu.Refresh" xml:space="preserve">
+    <value>Rafraîchir maintenant</value>
+  </data>
+  <data name="Screen.Menu.Settings" xml:space="preserve">
+    <value>Paramètres…</value>
+  </data>
+  <data name="Screen.Menu.Warnings" xml:space="preserve">
+    <value>Avertissements ({0})</value>
+  </data>
+  <data name="Screen.Pipelines.Count" xml:space="preserve">
+    <value>{0} pipeline(s) surveillé(s).</value>
+  </data>
+  <data name="Screen.Pipelines.Hint" xml:space="preserve">
+    <value>Surveillez un pipeline pour être alerté de ses échecs et de ses retours au vert.</value>
+  </data>
+  <data name="Screen.Pipelines.SelectionTitle" xml:space="preserve">
+    <value>Pipelines surveillés</value>
+  </data>
+  <data name="Screen.Pipelines.TreeTitle" xml:space="preserve">
+    <value>Comptes, espaces et pipelines</value>
+  </data>
+  <data name="Screen.Preferences.Behaviour" xml:space="preserve">
+    <value>Comportement et apparence</value>
+  </data>
+  <data name="Screen.Preferences.Interval" xml:space="preserve">
+    <value>Intervalle de surveillance (secondes)</value>
+  </data>
+  <data name="Screen.Preferences.Kinds" xml:space="preserve">
+    <value>Me notifier quand…</value>
+  </data>
+  <data name="Screen.Preferences.Language" xml:space="preserve">
+    <value>Langue de l'interface</value>
+  </data>
+  <data name="Screen.Preferences.MaxNotifications" xml:space="preserve">
+    <value>Notifications individuelles maximum par cycle</value>
+  </data>
+  <data name="Screen.Preferences.OperationalErrors" xml:space="preserve">
+    <value>Problèmes de fonctionnement (jeton expiré, dépôt inaccessible)</value>
+  </data>
+  <data name="Screen.Preferences.OwnActions" xml:space="preserve">
+    <value>Me notifier aussi de mes propres actions</value>
+  </data>
+  <data name="Screen.Preferences.RefreshMinutes" xml:space="preserve">
+    <value>Relire les discussions des autres PR toutes les (minutes)</value>
+  </data>
+  <data name="Screen.Preferences.Sound" xml:space="preserve">
+    <value>Émettre un son</value>
+  </data>
+  <data name="Screen.Preferences.Startup" xml:space="preserve">
+    <value>Démarrer avec Windows</value>
+  </data>
+  <data name="Screen.Preferences.Theme" xml:space="preserve">
+    <value>Thème de l'interface</value>
+  </data>
+  <data name="Screen.Preferences.ThreadScope" xml:space="preserve">
+    <value>Lecture des discussions</value>
+  </data>
+  <data name="Screen.Repositories.Count" xml:space="preserve">
+    <value>{0} dépôt(s) surveillé(s).</value>
+  </data>
+  <data name="Screen.Repositories.Hint" xml:space="preserve">
+    <value>Dépliez un compte pour parcourir ses dépôts.</value>
+  </data>
+  <data name="Screen.Repositories.SelectionTitle" xml:space="preserve">
+    <value>Dépôts surveillés</value>
+  </data>
+  <data name="Screen.Repositories.TreeTitle" xml:space="preserve">
+    <value>Comptes, espaces et dépôts</value>
+  </data>
+  <data name="Screen.Save.Invalid" xml:space="preserve">
+    <value>La configuration est incomplète :&#13;&#10;&#13;&#10;{0}</value>
+  </data>
+  <data name="Screen.Save.StartupFailed" xml:space="preserve">
+    <value>Le démarrage automatique n'a pas pu être modifié. Les autres réglages sont enregistrés.</value>
+  </data>
+  <data name="Screen.Settings.Title" xml:space="preserve">
+    <value>Forge Watcher — paramètres</value>
+  </data>
+  <data name="Screen.Tab.Accounts" xml:space="preserve">
+    <value>Comptes</value>
+  </data>
+  <data name="Screen.Tab.Advanced" xml:space="preserve">
+    <value>Avancé</value>
+  </data>
+  <data name="Screen.Tab.Pipelines" xml:space="preserve">
+    <value>Pipelines</value>
+  </data>
+  <data name="Screen.Tab.Preferences" xml:space="preserve">
+    <value>Préférences</value>
+  </data>
+  <data name="Screen.Tab.Repositories" xml:space="preserve">
+    <value>Dépôts</value>
+  </data>
+  <data name="Screen.ThreadScope.All" xml:space="preserve">
+    <value>Toutes les PR des dépôts surveillés (plus d'appels)</value>
+  </data>
+  <data name="Screen.ThreadScope.Involved" xml:space="preserve">
+    <value>Seulement les PR qui me concernent (recommandé)</value>
+  </data>
+  <data name="Screen.Tray.Error" xml:space="preserve">
+    <value>Forge Watcher — erreur : {0}</value>
+  </data>
+  <data name="Screen.Tray.NotConfigured" xml:space="preserve">
+    <value>Forge Watcher — configuration requise</value>
+  </data>
+  <data name="Screen.Tray.Tooltip" xml:space="preserve">
+    <value>Forge Watcher{0}&#13;&#10;{1}&#13;&#10;Dernier cycle : {2}</value>
+  </data>
+  <data name="Screen.Tray.Viewer" xml:space="preserve">
+    <value> ({0})</value>
+  </data>
+  <data name="Screen.Tree.AccountDisabled" xml:space="preserve">
+    <value>{0} (désactivé)</value>
+  </data>
+  <data name="Screen.Tree.AccountsLoaded" xml:space="preserve">
+    <value>{0} compte(s). Dépliez un compte pour voir son contenu.</value>
+  </data>
+  <data name="Screen.Tree.AddAccountFirst" xml:space="preserve">
+    <value>Ajoutez un compte dans l'onglet « Comptes » pour parcourir une forge.</value>
+  </data>
+  <data name="Screen.Tree.Empty" xml:space="preserve">
+    <value>(aucun élément)</value>
+  </data>
+  <data name="Screen.Tree.ItemsLoaded" xml:space="preserve">
+    <value>{0} : {1} élément(s).</value>
+  </data>
+  <data name="Screen.Tree.LoadFailed" xml:space="preserve">
+    <value>(chargement impossible)</value>
+  </data>
+  <data name="Screen.Tree.LoadFailedWith" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="Screen.Tree.Loading" xml:space="preserve">
+    <value>Chargement…</value>
+  </data>
+  <data name="Screen.Tree.LoadTimedOut" xml:space="preserve">
+    <value>{0} : délai dépassé lors du chargement.</value>
+  </data>
+  <data name="Screen.Tree.NoMatch" xml:space="preserve">
+    <value>(aucun résultat)</value>
+  </data>
+  <data name="Screen.Tree.ScopesLoaded" xml:space="preserve">
+    <value>{0} : {1} {2}.</value>
+  </data>
+  <data name="ThreadStatus.Active" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="ThreadStatus.ByDesign" xml:space="preserve">
+    <value>Par conception</value>
+  </data>
+  <data name="ThreadStatus.Closed" xml:space="preserve">
+    <value>Fermé</value>
+  </data>
+  <data name="ThreadStatus.Fixed" xml:space="preserve">
+    <value>Corrigé</value>
+  </data>
+  <data name="ThreadStatus.Pending" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="ThreadStatus.Unknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="ThreadStatus.WontFix" xml:space="preserve">
+    <value>Ne sera pas corrigé</value>
+  </data>
+  <data name="Vote.Approved.Action" xml:space="preserve">
+    <value>a approuvé</value>
+  </data>
+  <data name="Vote.Approved.Label" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="Vote.ApprovedWithSuggestions.Action" xml:space="preserve">
+    <value>a approuvé avec suggestions</value>
+  </data>
+  <data name="Vote.ApprovedWithSuggestions.Label" xml:space="preserve">
+    <value>Approuvé avec suggestions</value>
+  </data>
+  <data name="Vote.NoVote.Action" xml:space="preserve">
+    <value>a retiré son vote</value>
+  </data>
+  <data name="Vote.NoVote.Label" xml:space="preserve">
+    <value>Sans vote</value>
+  </data>
+  <data name="Vote.Rejected.Action" xml:space="preserve">
+    <value>a rejeté</value>
+  </data>
+  <data name="Vote.Rejected.Label" xml:space="preserve">
+    <value>Rejeté</value>
+  </data>
+  <data name="Vote.WaitingForAuthor.Action" xml:space="preserve">
+    <value>attend une correction</value>
+  </data>
+  <data name="Vote.WaitingForAuthor.Label" xml:space="preserve">
+    <value>En attente de l'auteur</value>
+  </data>
+  <data name="Forge.AzureDevOps.UrlLabel" xml:space="preserve">
+    <value>URL de l'organisation</value>
+  </data>
+  <data name="Forge.GitHub.UrlLabel" xml:space="preserve">
+    <value>URL du serveur GitHub</value>
+  </data>
+  <data name="Forge.GitLab.UrlLabel" xml:space="preserve">
+    <value>URL du serveur GitLab</value>
+  </data>
+  <data name="Forge.AzureDevOps.ScopeLabel" xml:space="preserve">
+    <value>Projets</value>
+  </data>
+  <data name="Forge.GitHub.ScopeLabel" xml:space="preserve">
+    <value>Propriétaires</value>
+  </data>
+  <data name="Forge.GitLab.ScopeLabel" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="Forge.AzureDevOps.TokenScopeHint" xml:space="preserve">
+    <value>Portée minimale : Code → Lecture, et Build → Lecture pour les pipelines.</value>
+  </data>
+  <data name="Forge.GitHub.TokenScopeHint" xml:space="preserve">
+    <value>Jeton « fine-grained » recommandé : Metadata, Pull requests et Actions en lecture seule, plus Members en lecture pour lister les organisations. Un jeton classique demande « repo » (ou « public_repo ») et « read:org ».</value>
+  </data>
+  <data name="Forge.GitLab.TokenScopeHint" xml:space="preserve">
+    <value>Portée minimale : « read_api » — la seule des trois forges à offrir une portée réellement limitée à la lecture.</value>
+  </data>
+  <data name="Screen.Toast.SummaryTitle" xml:space="preserve">
+    <value>{0} nouvelles activités sur vos pull requests</value>
+  </data>
+  <data name="Screen.Toast.SummaryHint" xml:space="preserve">
+    <value>Cliquez pour voir le détail</value>
+  </data>
+  <data name="Screen.Toast.BalloonSummaryTitle" xml:space="preserve">
+    <value>{0} nouvelles activités</value>
+  </data>
+  <data name="Screen.Toast.BalloonSummaryBody" xml:space="preserve">
+    <value>Cliquez pour voir le détail dans la fenêtre d'activité.</value>
+  </data>
+  <data name="Poll.Followed.PullRequests" xml:space="preserve">
+    <value>{0} PR suivie(s)</value>
+  </data>
+  <data name="Poll.Followed.Pipelines" xml:space="preserve">
+    <value>{0} pipeline(s){1}</value>
+  </data>
+  <data name="Poll.Followed.PipelinesFailing" xml:space="preserve">
+    <value> dont {0} en échec</value>
+  </data>
+  <data name="Poll.PartialFailure" xml:space="preserve">
+    <value>{0} — {1} avertissement(s)</value>
+  </data>
+  <data name="Poll.View.UnresolvedThreads" xml:space="preserve">
+    <value>{0} discussion(s) ouverte(s)</value>
+  </data>
+  <data name="Poll.View.YourVote" xml:space="preserve">
+    <value>votre vote : {0}</value>
+  </data>
+  <data name="Poll.View.Draft" xml:space="preserve">
+    <value>brouillon</value>
+  </data>
+  <data name="Forge.Error.AuthAdvice" xml:space="preserve">
+    <value>{0} Vérifiez que le PAT est valide, non expiré, et qu'il donne accès en lecture au code.</value>
+  </data>
+  <data name="Forge.Error.TransientAdvice" xml:space="preserve">
+    <value>{0} Nouvelle tentative au prochain cycle.</value>
+  </data>
+  <data name="Event.Pipeline.Subject" xml:space="preserve">
+    <value>{0} · exécution {1}</value>
+  </data>
+  <data name="Event.PullRequest.Subject" xml:space="preserve">
+    <value>!{0} — {1}</value>
+  </data>
+  <data name="Forge.Error.NoIdentity" xml:space="preserve">
+    <value>{0} n'a pas renvoyé d'identité pour ce jeton.</value>
+  </data>
+  <data name="Forge.Error.HtmlResponse" xml:space="preserve">
+    <value>Réponse inattendue d'Azure DevOps (page HTML au lieu de JSON) : le jeton est probablement invalide ou l'URL d'organisation incorrecte.</value>
+  </data>
+  <data name="Forge.Error.ForbiddenAzureDevOps" xml:space="preserve">
+    <value>Accès refusé (403) : le jeton n'a pas la portée « Code (Lecture) » sur cette ressource.</value>
+  </data>
+  <data name="Forge.Error.QuotaExhausted" xml:space="preserve">
+    <value>{0} limite temporairement les appels (quota épuisé).{1}</value>
+  </data>
+  <data name="Forge.Error.QuotaReset" xml:space="preserve">
+    <value> Quota réinitialisé dans {0} minute(s).</value>
+  </data>
+  <data name="Forge.Error.InvalidGitHubPath" xml:space="preserve">
+    <value>« {0} » n'est pas un dépôt GitHub valide : un pipeline GitHub est identifié par « propriétaire/dépôt ». Resélectionnez les pipelines à surveiller.</value>
+  </data>
+  <data name="Forge.Error.IncompleteGitHubRepository" xml:space="preserve">
+    <value>Dépôt « {0} » incomplet : GitHub identifie un dépôt par son propriétaire et son nom. Resélectionnez les dépôts à surveiller.</value>
+  </data>
+  <data name="Forge.Error.InvalidGitLabProject" xml:space="preserve">
+    <value>Dépôt « {0} » inutilisable : GitLab identifie un projet par un numéro. Resélectionnez les dépôts à surveiller.</value>
+  </data>
+  <data name="Forge.GitHub.PersonalRepositories" xml:space="preserve">
+    <value>Vos dépôts personnels</value>
+  </data>
+</root>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Couche DOMAINE : entités, objets-valeur et règles métier pures.
+    Contrainte d'architecture : AUCUNE référence à un projet ou un package tiers.
+    Si un `using` d'infrastructure apparaît ici, c'est un bug d'architecture.
+  -->
+  <PropertyGroup>
+    <RootNamespace>CSharpForgeWatcher.Domain</RootNamespace>
+  </PropertyGroup>
+
+</Project>

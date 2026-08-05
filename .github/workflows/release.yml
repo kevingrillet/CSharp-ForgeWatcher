@@ -1,0 +1,121 @@
+# Publication d'une version de « Forge Watcher ».
+#
+# Déclencheur : la poussée d'un tag qui commence par « v » (v1.0.0, v1.1.0-beta.1, ...).
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# Enchaînement : compilation Release -> tests (garde-fou) -> dotnet publish win-x64
+#                -> archive .zip -> création de la release GitHub avec l'archive attachée.
+#
+# L'application est publiée en « framework-dependent » (--self-contained false) :
+# l'archive est légère (~2 Mo) mais le poste cible doit avoir le runtime .NET 9 Desktop.
+# Pour un exécutable autonome, passer --self-contained true (archive ~150 Mo).
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# Écriture nécessaire : la tâche crée une release et y attache un fichier.
+permissions:
+  contents: write
+
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  SOLUTION: CSharp-ForgeWatcher.slnx
+  PROJET_UI: src/CSharpForgeWatcher.Ui
+
+jobs:
+  publier:
+    name: Publication de l'exécutable Windows
+    # Runner Windows obligatoire : le projet Ui est du WinForms (net9.0-windows10.0.17763.0).
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installation du SDK .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Cache des paquets NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'NuGet.Config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      # Le tag « v1.2.3 » devient la version « 1.2.3 », injectée dans les assemblies via
+      # -p:Version pour que le binaire livré porte le même numéro que la release.
+      - name: Calcul du numéro de version depuis le tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $version = $tag -replace '^v', ''
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "archive=ForgeWatcher-$tag-win-x64.zip" >> $env:GITHUB_OUTPUT
+          Write-Host "Version publiée : $version"
+
+      - name: Restauration des dépendances
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Compilation en Release
+        run: dotnet build ${{ env.SOLUTION }} --no-restore -c Release -p:Version=${{ steps.version.outputs.version }}
+
+      # Garde-fou : on ne livre pas une version dont les tests unitaires échouent.
+      - name: Exécution des tests unitaires
+        run: dotnet test ${{ env.SOLUTION }} --no-build -c Release --logger trx --results-directory TestResults
+
+      # Publication ciblée win-x64 dans un dossier propre et dédié.
+      - name: Publication de l'application
+        run: dotnet publish ${{ env.PROJET_UI }} -c Release -r win-x64 --self-contained false -p:Version=${{ steps.version.outputs.version }} -o publish
+
+      # Compress-Archive est fourni par PowerShell : aucune dépendance externe.
+      # « publish\* » évite d'imbriquer un dossier « publish » dans l'archive.
+      - name: Création de l'archive ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path 'publish\*' -DestinationPath '${{ steps.version.outputs.archive }}' -Force
+          Get-Item '${{ steps.version.outputs.archive }}' | Select-Object Name, Length
+
+      # Copie de l'archive dans les artefacts du run : elle reste récupérable même si
+      # la création de la release échoue (droits, tag déjà publié, ...).
+      - name: Conservation de l'archive en artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-win-x64
+          path: ${{ steps.version.outputs.archive }}
+          if-no-files-found: error
+          retention-days: 30
+
+      # Crée (ou met à jour) la release GitHub correspondant au tag, y attache l'archive
+      # et complète le descriptif avec la liste des commits depuis la release précédente.
+      # Le jeton utilisé est le GITHUB_TOKEN fourni automatiquement par GitHub Actions :
+      # aucun secret à configurer à la main (voir docs/CI.md).
+      - name: Création de la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Forge Watcher ${{ steps.version.outputs.tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          files: ${{ steps.version.outputs.archive }}
+          # Un tag contenant un tiret (v1.1.0-beta.1) est considéré comme une préversion.
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            ## Installation
+
+            1. Télécharger `${{ steps.version.outputs.archive }}` puis décompresser l'archive.
+            2. Vérifier que le **runtime .NET 9 Desktop (x64)** est installé sur le poste.
+            3. Lancer `ForgeWatcher.exe`.
+
+            Le détail des changements est dans le `CHANGELOG.md` du dépôt.

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Outil de fabrication du logo : redessine forge-watcher.svg avec GDI+ et assemble
+    assets/logo/forge-watcher.ico (16, 24, 32, 48, 64, 128, 256).
+
+    Ce projet n'est VOLONTAIREMENT PAS référencé par CSharp-ForgeWatcher.slnx :
+    il ne fait pas partie de l'application, il ne sert qu'à régénérer un fichier
+    binaire versionné. Il reste dans le dépôt pour que le logo soit reproductible.
+
+    UseWindowsForms n'est là que pour obtenir System.Drawing (GDI+) sans dépendance
+    NuGet supplémentaire ; aucune fenêtre n'est créée, c'est une application console.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>CSharpForgeWatcher.LogoGenerator</RootNamespace>
+    <AssemblyName>LogoGenerator</AssemblyName>
+    <!-- Outil interne : ni doc XML, ni paquet, ni publication. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>

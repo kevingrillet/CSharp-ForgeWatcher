@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests unitaires (NUnit) du domaine et de la couche application.
+    Les couches testées n'ont aucune dépendance à Windows / au réseau : tout est
+    remplaçable par des doubles de test (voir Doubles/).
+    Chaque test est tagué avec l'identifiant de spec qu'il couvre :
+        [Category("SPEC-EVT-001")]
+    ce qui permet de rejouer une spec précise (voir README pour la commande exacte
+    avec l'option de filtre "TestCategory=SPEC-EVT-001").
+  -->
+  <PropertyGroup>
+    <RootNamespace>CSharpForgeWatcher.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CSharpForgeWatcher.Domain\CSharpForgeWatcher.Domain.csproj" />
+    <ProjectReference Include="..\..\src\CSharpForgeWatcher.Application\CSharpForgeWatcher.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="NUnit" Version="4.5.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="4.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+</Project>
