@@ -60,7 +60,7 @@ jobs:
       # de paquet change, une nouvelle entrée de cache est créée (restore-keys sert
       # alors de repli pour ne pas repartir d'un cache totalement vide).
       - name: Cache des paquets NuGet
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'NuGet.Config') }}
@@ -114,7 +114,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Cache des paquets NuGet
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'NuGet.Config') }}
