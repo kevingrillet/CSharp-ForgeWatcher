@@ -1,24 +1,47 @@
-name: Links
+# Vérification des liens de la documentation.
+#
+# Le dépôt est très documenté et très maillé : le README renvoie aux specs, les specs aux
+# ADR, la matrice de traçabilité aux fichiers de tests. Un renommage de fichier casse ces
+# liens en silence — c'est exactement ce que cette tâche attrape.
+#
+# Mode « --offline » assumé : seuls les liens **internes** (fichiers et dossiers du dépôt)
+# sont vérifiés. Les adresses externes sont, pour l'essentiel, des exemples volontairement
+# fictifs (contoso, mon-organisation, github.mon-entreprise.fr) : les interroger rendrait
+# cette tâche rouge en permanence, donc ignorée. Un contrôle qu'on apprend à ignorer ne
+# sert plus à rien.
+
+name: Liens
 
 on:
   push:
     paths:
-      - '**/*.md'
+      - "**/*.md"
   pull_request:
     paths:
-      - '**/*.md'
+      - "**/*.md"
   schedule:
-    - cron: '0 0 * * SUN'
+    - cron: "0 0 * * SUN"
+
+concurrency:
+  group: liens-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  linkChecker:
+  verification-des-liens:
+    name: Liens internes de la documentation
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
+    timeout-minutes: 10
 
-      - name: Link Checker
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+
+      - name: Contrôle des liens
         uses: lycheeverse/lychee-action@v2.9.0
         with:
-          args: --verbose --no-progress **/*.md
+          args: --offline --no-progress --verbose "**/*.md"
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

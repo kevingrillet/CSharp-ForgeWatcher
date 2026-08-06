@@ -1,0 +1,51 @@
+<Project>
+
+  <!--
+    Propriétés communes à tous les projets de la solution.
+    Chaque projet peut surcharger ce qu'il veut (ex : l'UI cible net9.0-windows*).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>fr-FR</NeutralLanguage>
+    <Product>Forge Watcher</Product>
+
+    <!--
+      Version EN PRÉPARATION, c'est-à-dire celle que décrit la section « Non publié » du
+      CHANGELOG. Elle ne sert qu'aux compilations locales : lors d'une publication, le
+      numéro vient du tag git (« -p:Version=… » dans .github/workflows/release.yml), et
+      c'est lui qui fait foi. La tenir à jour évite qu'un binaire de développement
+      s'annonce sous le numéro de la version déjà publiée.
+    -->
+    <Version>1.2.0</Version>
+
+    <!-- On documente le code : la doc XML est générée, mais on n'échoue pas sur les membres non documentés. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Qualité de compilation.
+
+    TreatWarningsAsErrors : un avertissement ignoré aujourd'hui est un bug demain. Tout doit
+    être traité, y compris les avertissements NuGet (version résolue différente de celle
+    demandée) et ceux des analyseurs de nullabilité.
+
+    EnforceCodeStyleInBuild : les règles de style du .editorconfig deviennent des
+    avertissements de compilation, donc des erreurs ici. La mise en forme pure, elle, est
+    vérifiée par « dotnet format » en intégration continue (voir docs/CI.md).
+
+    Si un avertissement doit vraiment être toléré, on le désactive LOCALEMENT, par
+    « pragma warning disable » accompagné d'un commentaire justifiant l'exception, plutôt que
+    globalement : l'exception reste ainsi visible là où elle se produit.
+  -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+
+</Project>

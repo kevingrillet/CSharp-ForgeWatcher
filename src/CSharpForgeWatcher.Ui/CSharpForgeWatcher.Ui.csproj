@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Couche PRÉSENTATION (WinForms) : icône de notification, toasts Windows, fenêtres.
+    C'est aussi la racine de composition (Composition/ServiceRegistration.cs) : le seul
+    endroit qui connaît à la fois les ports et leurs implémentations.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- 10.0.17763 est requis par Microsoft.Toolkit.Uwp.Notifications (toasts non packagés). -->
+    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>CSharpForgeWatcher.Ui</RootNamespace>
+    <AssemblyName>ForgeWatcher</AssemblyName>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationDefaultFont>Segoe UI, 9pt</ApplicationDefaultFont>
+    <!--
+      Icône de l'exécutable (SPEC-UI-ICON-001). C'est aussi la source de l'icône affichée dans
+      la zone de notification et sur les fenêtres : TrayIconFactory la relit depuis ForgeWatcher.exe
+      au lieu d'embarquer une seconde copie de l'image.
+      Régénération : voir assets/logo/README.md.
+    -->
+    <ApplicationIcon>..\..\assets\logo\forge-watcher.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpForgeWatcher.Application\CSharpForgeWatcher.Application.csproj" />
+    <ProjectReference Include="..\CSharpForgeWatcher.Infrastructure\CSharpForgeWatcher.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+  </ItemGroup>
+
+</Project>

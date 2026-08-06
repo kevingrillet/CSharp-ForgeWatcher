@@ -1,13 +1,48 @@
 {
-    "editor.rulers": [
-        80, // Terminal windows
-        125 // GitHub diff view
-    ],
-    // Extension - markdownlint > https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint
-    "markdownlint.config": {
-        "default": true,
-        "MD033": false, // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#md033
-        "MD041": false, // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#md041
-        "MD045": false  // https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#md045
-    }
+  // Réglages partagés du dépôt (versionnés volontairement : ils font partie du projet).
+
+  // La solution est au format .slnx : sans cette ligne, l'extension C# demande à chaque
+  // ouverture quelle solution charger.
+  "dotnet.defaultSolution": "CSharp-ForgeWatcher.slnx",
+
+  // Cohérent avec .editorconfig et .gitattributes (CRLF partout).
+  "files.eol": "\r\n",
+  "files.encoding": "utf8",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+
+  // La build échoue au moindre avertissement : autant les voir en écrivant.
+  "dotnet.unitTests.runSettingsPath": "",
+  "omnisharp.enableEditorConfigSupport": true,
+
+  // Les dossiers générés polluent la recherche et l'explorateur.
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/TestResults": true
+  },
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/obj/**": true
+  },
+
+  // Les .feature sont du Gherkin francophone.
+  "files.associations": {
+    "*.feature": "feature"
+  },
+  "cucumberautocomplete.steps": ["docs/features/*.feature"],
+  "cucumberautocomplete.syncfeatures": "docs/features/*.feature",
+
+  // Schémas YAML des pipelines : validation à la frappe.
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/dependabot-2.0.json": ".github/dependabot.yml",
+    "https://json.schemastore.org/gitlab-ci.json": ".gitlab-ci.yml"
+  }
 }

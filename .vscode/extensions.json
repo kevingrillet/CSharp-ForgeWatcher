@@ -1,0 +1,22 @@
+{
+  // Extensions recommandées : VS Code les propose à l'ouverture du dépôt.
+  // Volontairement court — seulement ce qui sert réellement sur ce projet.
+  "recommendations": [
+    // C# : IntelliSense, débogage, tests. Le premier suffit pour compiler et déboguer.
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+
+    // Respecte .editorconfig (fins de ligne CRLF, indentation) à l'enregistrement.
+    "editorconfig.editorconfig",
+
+    // Coloration et complétion des scénarios Gherkin de docs/features.
+    "alexkrechik.cucumberautocomplete",
+
+    // Validation YAML des pipelines CI (.github/workflows, .gitlab-ci.yml).
+    "redhat.vscode-yaml",
+
+    // Suivi des exécutions GitHub Actions depuis l'éditeur.
+    "github.vscode-github-actions"
+  ],
+  "unwantedRecommendations": []
+}

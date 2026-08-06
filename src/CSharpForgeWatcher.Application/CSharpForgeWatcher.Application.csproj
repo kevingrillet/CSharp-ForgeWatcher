@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Couche APPLICATION : cas d'usage, orchestration et *ports* (interfaces).
+    Ne dépend que du domaine + des abstractions de logging/DI.
+    Aucune dépendance à Azure DevOps, au système de fichiers ou à Windows.
+  -->
+  <PropertyGroup>
+    <RootNamespace>CSharpForgeWatcher.Application</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpForgeWatcher.Domain\CSharpForgeWatcher.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,131 @@
+# Intégration continue de la solution « Forge Watcher ».
+#
+# Deux tâches indépendantes tournent en parallèle sur un runner Windows :
+#   1. « Compilation et tests »          : restore -> build Release -> tests NUnit
+#   2. « Vérification de la mise en forme » : dotnet format --verify-no-changes
+#
+# Pourquoi Windows et seulement Windows ?
+#   La solution contient du WinForms, du DPAPI et des accès au registre : les projets
+#   Infrastructure (net9.0-windows) et Ui (net9.0-windows10.0.17763.0) ne compilent pas
+#   sur Linux. On ne tente donc jamais la solution complète ailleurs que sur Windows.
+#   (Le mode dégradé Linux, limité à Domain/Application/Tests, existe côté GitLab :
+#    voir .gitlab-ci.yml et docs/CI.md.)
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Un seul run utile par branche / par pull request : les pushs successifs annulent
+# les exécutions devenues obsolètes au lieu de faire la queue.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# La CI ne fait que lire le dépôt : aucun droit d'écriture n'est nécessaire.
+permissions:
+  contents: read
+
+env:
+  # Sorties de build plus lisibles et pas de télémétrie sur les runners.
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+  # Fichier solution au format .slnx (nécessite un SDK .NET >= 9.0.200).
+  SOLUTION: CSharp-ForgeWatcher.slnx
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Compilation + tests unitaires
+  # ---------------------------------------------------------------------------
+  build-et-tests:
+    name: Compilation et tests (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+
+      - name: Installation du SDK .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      # Le cache évite de retélécharger les paquets à chaque exécution.
+      # La clé dépend des fichiers qui décrivent les dépendances : dès qu'une version
+      # de paquet change, une nouvelle entrée de cache est créée (restore-keys sert
+      # alors de repli pour ne pas repartir d'un cache totalement vide).
+      - name: Cache des paquets NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'NuGet.Config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restauration des dépendances
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      # Aucun paramètre n'est ajouté pour contourner les avertissements : la solution
+      # est censée compiler sans le moindre warning (TreatWarningsAsErrors).
+      - name: Compilation en Release
+        run: dotnet build ${{ env.SOLUTION }} --no-restore -c Release
+
+      - name: Exécution des tests unitaires
+        run: dotnet test ${{ env.SOLUTION }} --no-build -c Release --logger trx --results-directory TestResults
+
+      # « if: always() » : on veut le rapport surtout quand les tests échouent.
+      - name: Publication des résultats de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultats-tests
+          path: TestResults/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 2. Mise en forme du code
+  # ---------------------------------------------------------------------------
+  # Tâche séparée pour que l'échec soit lisible d'un coup d'œil : un rouge ici veut
+  # dire « lance dotnet format », pas « le code est cassé ».
+  #
+  # ATTENTION (fins de ligne) : le .editorconfig impose end_of_line = crlf. Le contrôle
+  # ne passe donc que si la copie de travail contient bien des CRLF. C'est le cas sur
+  # les runners Windows de GitHub (git y est configuré avec core.autocrlf=true), mais
+  # cela reste implicite : ajouter un .gitattributes contenant « * text=auto eol=crlf »
+  # rendrait ce comportement déterministe sur toutes les plateformes.
+  mise-en-forme:
+    name: Vérification de la mise en forme (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+
+      - name: Installation du SDK .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Cache des paquets NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'NuGet.Config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      # dotnet format charge les projets via MSBuild : la restauration est donc requise.
+      - name: Restauration des dépendances
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      # --verify-no-changes ne réécrit rien : il sort en erreur (code 2) et liste les
+      # fichiers à reformater. Correction en local : dotnet format CSharp-ForgeWatcher.slnx
+      - name: Contrôle du formatage
+        run: dotnet format ${{ env.SOLUTION }} --verify-no-changes --no-restore

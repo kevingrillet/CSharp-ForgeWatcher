@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Forge Watcher">
+  <title>Forge Watcher — variante monochrome</title>
+  <!--
+    Variante à une seule encre (documentation, impression, favicon monochrome, tampon).
+
+    Le glyphe est *détouré* du disque par un masque : le fond de la page apparaît en
+    transparence, donc le logo reste lisible sur n'importe quel support.
+    La couleur suit `currentColor` : il suffit de définir `color` sur un parent
+    (`<span style="color:#006ABE">…`) ou de remplacer `currentColor` par une valeur fixe.
+    Géométrie strictement identique à forge-watcher.svg.
+  -->
+  <defs>
+    <mask id="glyphe" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <!-- Blanc = encre conservée, noir = encre retirée. -->
+      <rect width="32" height="32" fill="#FFFFFF" />
+      <g fill="none" stroke="#000000" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.5 22.5 L16 17 L21.5 22.5" />
+        <path d="M16 17 L16 12.5" />
+      </g>
+      <polygon points="16,5.5 10,13 22,13" fill="#000000" />
+      <circle cx="21.5" cy="22.5" r="3.4" fill="#000000" />
+    </mask>
+  </defs>
+
+  <circle cx="16" cy="16" r="15" fill="currentColor" mask="url(#glyphe)" />
+</svg>

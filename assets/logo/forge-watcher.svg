@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Forge Watcher">
+  <title>Forge Watcher</title>
+  <!--
+    Logo maître de Forge Watcher — grille de conception 32 x 32 (tout est exprimé en
+    trente-deuxièmes, donc directement transposable en pixels aux tailles 16/32/64…).
+
+    Symbole : deux branches qui convergent vers une flèche de fusion (pull request).
+    Contraintes de lisibilité à 16 x 16 :
+      - formes épaisses (traits de 4,5 unités = 2,25 px à 16 x 16) ;
+      - trois éléments seulement (disque, « Y » fléché, nœud de la branche entrante) ;
+      - fort contraste : blanc sur bleu, aucun détail sous 3 unités.
+
+    Palette :
+      #006ABE bleu de marque (disque)
+      #FFFFFF glyphe
+      #FFB300 accent ambre — nœud de la branche entrante
+  -->
+
+  <!-- Disque : rayon 15 pour laisser 1 unité de marge (les icônes Windows sont rognées de près). -->
+  <circle cx="16" cy="16" r="15" fill="#006ABE" />
+
+  <g fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Les deux branches qui convergent. -->
+    <path d="M10.5 22.5 L16 17 L21.5 22.5" />
+    <!-- Tronc commun, jusqu'à la base de la flèche (chevauchement volontaire : pas de couture). -->
+    <path d="M16 17 L16 12.5" />
+  </g>
+
+  <!-- Pointe de fusion : triangle plein, nettement plus large que le tronc — c'est ce qui reste
+       identifiable à 16 x 16, où le trait ne fait plus que 2 px. -->
+  <polygon points="16,5.5 10,13 22,13" fill="#FFFFFF" />
+
+  <!-- Un seul nœud, à droite : la branche entrante (la pull request). Un second nœud à gauche
+       surchargerait l'icône aux petites tailles. -->
+  <circle cx="21.5" cy="22.5" r="3.4" fill="#FFB300" />
+</svg>

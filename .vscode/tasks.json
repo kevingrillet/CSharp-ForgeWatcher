@@ -1,0 +1,109 @@
+{
+  "version": "2.0.0",
+  // Les quatre premières tâches sont exactement ce que vérifie l'intégration continue :
+  // les lancer avant de pousser évite un aller-retour (voir docs/CI.md).
+  "tasks": [
+    {
+      "label": "build",
+      "detail": "Compile la solution (les avertissements sont des erreurs).",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "CSharp-ForgeWatcher.slnx", "--nologo"],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "tests",
+      "detail": "Exécute les tests unitaires.",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["test", "CSharp-ForgeWatcher.slnx", "--nologo"],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "mise en forme",
+      "detail": "Applique la mise en forme (dotnet format).",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["format", "CSharp-ForgeWatcher.slnx"],
+      "problemMatcher": []
+    },
+    {
+      "label": "mise en forme (vérification)",
+      "detail": "Échoue si la mise en forme n'est pas conforme, comme en CI.",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["format", "CSharp-ForgeWatcher.slnx", "--verify-no-changes"],
+      "problemMatcher": []
+    },
+    {
+      "label": "tout vérifier",
+      "detail": "Build + mise en forme + tests : la vérification complète avant de pousser.",
+      "dependsOrder": "sequence",
+      "dependsOn": ["build", "mise en forme (vérification)", "tests"],
+      "problemMatcher": []
+    },
+    {
+      "label": "lancer l'application",
+      "detail": "Démarre Forge Watcher (icône dans la zone de notification).",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["run", "--project", "src/CSharpForgeWatcher.Ui"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publier (win-x64)",
+      "detail": "Restaure, compile et produit l'exécutable distribuable dans publish/.",
+      // -ExecutionPolicy Bypass : la stratégie d'exécution par défaut d'un poste d'entreprise
+      // refuse les scripts .ps1 locaux. Le contournement vaut pour ce seul processus.
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/publier.ps1"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publier (autonome)",
+      "detail": "Idem, en exécutable unique qui n'exige aucun runtime sur le poste cible.",
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/publier.ps1",
+        "-Autonome"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "nettoyer",
+      "detail": "Supprime bin/, obj/, publish/ et TestResults/ (ajouter -WhatIf pour simuler).",
+      "command": "powershell",
+      "type": "process",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/nettoyer.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "régénérer le logo",
+      "detail": "Recrée assets/logo/forge-watcher.ico depuis le générateur.",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["run", "--project", "assets/logo/generator/LogoGenerator.csproj"],
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,2 +1,21 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalisation des fins de ligne.
+#
+# Le dépôt est cohérent avec .editorconfig (end_of_line = crlf) : les fichiers texte sont
+# extraits en CRLF sur toutes les plateformes. Sans cela, `dotnet format --verify-no-changes`
+# passe sur Windows et échoue sur un agent Linux — panne classique et pénible à diagnostiquer.
+* text=auto eol=crlf
+
+# Fichiers binaires : jamais de conversion, sinon ils sont corrompus.
+*.ico binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.snk binary
+
+# Le SVG est du texte.
+*.svg text
+
+# Marque les fichiers générés dans les diffs GitHub (pliés par défaut).
+assets/logo/forge-watcher.ico binary linguist-generated=true

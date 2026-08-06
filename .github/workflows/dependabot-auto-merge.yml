@@ -1,23 +1,45 @@
+# Fusion automatique des pull requests de Dependabot.
+#
+# Portée volontairement étroite : seules les montées de version **patch** et **mineures**
+# sont fusionnées sans relecture. Une montée **majeure** reste manuelle — c'est là que se
+# cachent les ruptures d'API, et une CI verte ne prouve pas qu'un changement de
+# comportement soit acceptable.
+#
+# « gh pr merge --auto » n'écrase rien : la fusion attend que les contrôles requis
+# passent. Cela suppose que la protection de branche de « main » exige bien les tâches
+# de ci.yml ; sans cette protection, GitHub fusionnerait dès que la pull request est
+# fusionnable, donc potentiellement avant la fin de la CI.
+
 name: Dependabot auto-merge
+
 on: pull_request
 
+# Écriture nécessaire : la tâche active la fusion automatique sur la pull request.
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
   dependabot:
+    name: Fusion automatique (patch et mineur)
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: ${{ github.actor == 'dependabot[bot]' }}
+
     steps:
-      - name: Dependabot metadata
+      - name: Lecture des métadonnées Dependabot
         id: metadata
         uses: dependabot/fetch-metadata@v3.1.0
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Enable auto-merge for Dependabot PRs
+
+      - name: Activation de la fusion automatique
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Montée majeure — relecture manuelle
+        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-major' }}
+        run: echo "::notice::Montée majeure (${{ steps.metadata.outputs.dependency-names }}) — fusion manuelle après relecture."
