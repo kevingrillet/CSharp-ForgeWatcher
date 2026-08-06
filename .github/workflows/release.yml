@@ -101,7 +101,7 @@ jobs:
       # Le jeton utilisé est le GITHUB_TOKEN fourni automatiquement par GitHub Actions :
       # aucun secret à configurer à la main (voir docs/CI.md).
       - name: Création de la release GitHub
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Forge Watcher ${{ steps.version.outputs.tag }}
           tag_name: ${{ steps.version.outputs.tag }}
